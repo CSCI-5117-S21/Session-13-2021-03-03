@@ -22,4 +22,13 @@ def new_hobby():
 
 @app.route("/hobby", methods=['GET'])
 def hobby_list():
-    pass
+    return render_template("autocomplete.html")
+
+
+@app.route("/hobby/autocomplete", methods=['GET'])
+def hobby_autocomplete():
+    query = request.args.get("query")
+    with db.get_db_cursor() as cur:
+        cur.execute("SELECT name FROM hobby WHERE name like %s;", ("%"+query+"%", ))
+        results = [x[0] for x in cur]
+        return jsonify(results)
